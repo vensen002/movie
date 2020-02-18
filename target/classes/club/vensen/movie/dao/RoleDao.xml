@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="club.vensen.movie.dao.RoleDao">
+  <resultMap id="BaseResultMap" type="club.vensen.movie.model.Role">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="is_del" jdbcType="BIT" property="del" />
+    <result column="status" jdbcType="SMALLINT" property="status" />
+    <result column="create_at" jdbcType="TIMESTAMP" property="createAt" />
+    <result column="update_at" jdbcType="TIMESTAMP" property="updateAt" />
+  </resultMap>
+  <!-- 基础数据列表名 -->
+  <sql id="Base_Column_List">
+    id, name, description, is_del, status, create_at, update_at
+  </sql>
+  <!-- 通过id 查询角色 -->
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from system_role
+    where id = #{id} and is_del = 0
+  </select>
+  <!-- 查询所有账户信息 -->
+  <select id="selectAll" parameterType="map" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from system_role
+    where is_del = 0
+    <if test="name != null and name != ''">
+      and account like CONCAT(CONCAT('%', #{name}), '%')
+    </if>
+  </select>
+  <!-- 通过id 删除角色 -->
+  <delete id="deleteByPrimaryKey" parameterType="list">
+    update system_role set is_del = 1
+    where id in
+    <foreach collection="array" item="id" index="index" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </delete>
+  <!-- 插入数据 -->
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="club.vensen.movie.model.Role" useGeneratedKeys="true">
+    insert into system_role
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="name != null">
+        name,
+      </if>
+      <if test="description != null">
+        description,
+      </if>
+      <if test="del != null">
+        is_del,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="createAt != null">
+        create_at,
+      </if>
+      <if test="updateAt != null">
+        update_at,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="name != null">
+        #{name},
+      </if>
+      <if test="description != null">
+        #{description},
+      </if>
+      <if test="del != null">
+        #{del},
+      </if>
+      <if test="status != null">
+        #{status},
+      </if>
+      <if test="createAt != null">
+        #{createAt},
+      </if>
+      <if test="updateAt != null">
+        #{updateAt},
+      </if>
+    </trim>
+  </insert>
+  <!-- 更新数据 -->
+  <update id="updateByPrimaryKeySelective" parameterType="club.vensen.movie.model.Role">
+    update system_role
+    <set>
+      <if test="name != null">
+        name = #{name},
+      </if>
+      <if test="description != null">
+        description = #{description},
+      </if>
+      <if test="del != null">
+        is_del = #{del},
+      </if>
+      <if test="status != null">
+        status = #{status},
+      </if>
+      <if test="createAt != null">
+        create_at = #{createAt},
+      </if>
+      <if test="updateAt != null">
+        update_at = #{updateAt},
+      </if>
+    </set>
+    where id = #{id} and is_del = 0
+  </update>
+
+</mapper>
